@@ -21,9 +21,17 @@ app.get('/todos',function (req,res) {
 
     if(queryParams.hasOwnProperty('completed') && queryParams.completed==="true"){
         filterTodos=_.where(todos, {completed: true});
-    } else     if(queryParams.hasOwnProperty('completed') && queryParams.completed==="false") {
+    } else if(queryParams.hasOwnProperty('completed') && queryParams.completed==="false") {
         filterTodos=_.where(todos, {completed: false});
     }
+
+    // todo loop through to do class and
+    if(queryParams.hasOwnProperty('q') && queryParams.q.length >0){
+        filterTodos=_.filter(filterTodos, function (todo) {
+          return  todo.description.toLowerCase().indexOf(queryParams.q.toLowerCase())>-1;
+        });
+    }
+
 
     res.json(filterTodos);
 

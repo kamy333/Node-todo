@@ -1,0 +1,19 @@
+Debugging
+
+to debug under node you can insert in the code:
+debugger;
+
+in CLI
+node debug (filename)
+
+to continue type to brak point
+cont
+
+type
+repl
+you can ask the value of an array.
+can modify the value of var
+
+to exit type
+kill
+

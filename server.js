@@ -102,38 +102,19 @@ app.get('/todos/:id', function (req, res) {
 
 app.post('/todos', function (req, res) {
 
-// var body=req.body;
     var body = _.pick(req.body, 'description', 'completed');
 
     if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
-        return res.status(400).send({error: 'validation'});
+        return res.status(400).json({error: 'validation'});
     }
 
-
-    db.todo.create({
-        description: body.description.trim()
-    }).then(function () {
-
-        return db.todo.max('id');
-    }).then(function (maxid) {
-        console.log('max id :' + maxid);
-        return db.todo.findById(maxid);
-    }).then(function (todo) {
-        console.log(todo);
-        res.json(todo);
+    db.todo.create(body).then(function (todo) {
+    res.json(todo.toJSON())
     }).catch(function (e) {
-        console.log(e);
-        return res.status(400).json(e);
-
+        res.status(400).send(e);
     });
 
-    // body.id = todoNextId++;
-    // body.description = body.description.trim();
-    // console.log('body.id ' + body.id);
-    //
-    // todos.push(body);
-    //
-    // res.json(body);
+
 });
 
 app.delete('/todos/:id', function (req, res) {

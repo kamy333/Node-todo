@@ -34,6 +34,7 @@ app.get('/todos', function (req, res) {
     // console.log({where: where});
 
 
+    //noinspection JSUnresolvedFunction
     db.todo.findAll({where: where}).then(function (todos) {
 
         res.json(todos);

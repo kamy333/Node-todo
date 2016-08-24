@@ -17,3 +17,14 @@ can modify the value of var
 to exit type
 kill
 
+------------------------------------------------
+to install add on heroku
+in  CLI  hobby-dev is the free plan type
+heroku addons:create heroku-postgresql:hobby-dev
+
+may take time to create db to see when finish creating db type
+heroku pg:wait
+
+install postgresql type
+npm install pg@4.4.1 --save
+npm install pg-hstore@2.3.2 --save

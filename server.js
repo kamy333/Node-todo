@@ -16,46 +16,29 @@ app.get('/', function (req, res) {
 app.use(bodyParser.json());
 
 app.get('/todos', function (req, res) {
-    var queryParams = req.query;
-    var todos = [];
-    // var filterTodos =[];
+    var query = req.query;
+    var where = {};
 
-    db.todo.findAll().then(function (todosAll) {
-        if (todosAll) {
-            todosAll.forEach(function (tds) {
-                if (tds.hasOwnProperty('dataValues')) {
-                    todos.push(tds.dataValues);
-                }
-            });
+    if (query.hasOwnProperty('completed') && query.completed === "true") {
+        where.completed = true;
 
-            var filterTodos = todos;
-            // console.log(filterTodos);
-
-            if (queryParams.hasOwnProperty('completed') && queryParams.completed === "true") {
-                filterTodos = _.where(todos, {completed: true});
-            } else if (queryParams.hasOwnProperty('completed') && queryParams.completed === "false") {
-                filterTodos = _.where(todos, {completed: false});
-            }
-
-            // todo loop through to do class and
-            if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
-                filterTodos = _.filter(filterTodos, function (todo) {
-                    return todo.description.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1;
-                });
-            }
+    } else if (query.hasOwnProperty('completed') && query.completed === "false") {
+        where.completed = false;
+    }
 
 
-            res.json(filterTodos);
+    if (query.hasOwnProperty('q') && query.q.length > 0) {
+        where.description = {$like: '%' + query.q + '%'};
+    }
+
+    // console.log({where: where});
 
 
-        } else {
-            res.status(404).json({notFound: '404 could not found toDos '});
+    db.todo.findAll({where: where}).then(function (todos) {
 
-        }
-
+        res.json(todos);
     }).catch(function (e) {
-        res.status(400).json('e');
-
+        return res.status(500).json(e);
     });
 
 

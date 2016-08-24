@@ -64,39 +64,20 @@ app.get('/todos', function (req, res) {
 app.get('/todos/:id', function (req, res) {
     var todoId = parseInt(req.params.id, 10);
 
+    db.todo.findById(todoId).then(function (todo) {
 
-    db.todo.findById(todoId).then(function (foundTodoId) {
-
-        if (foundTodoId.dataValues) {
-            matchedTodo = foundTodoId.dataValues;
-            // console.log(matchedTodo);
-            res.json(matchedTodo);
+        if (!!todo) {
+            res.json(todo.toJSON());
         } else {
             res.status(404).json({notFound: '404 could not found toDo item no ' + req.params.id});
 
         }
 
     }).catch(function (e) {
-        return res.status(400).json(e)
+        return res.status(500).json(e)
 
     });
 
-    // if(todosAll){
-    //     todosAll.forEach(function (tds) {
-    //         if(tds.hasOwnProperty('dataValues')){
-    //             todos.push(tds.dataValues);
-    //         }
-    //     }}
-
-    // var matchedTodo = _.findWhere(todos, {id: todoId});
-    //
-    //
-    // if (matchedTodo) {
-    //     res.json(matchedTodo);
-    // } else {
-    //     res.status(404).send('404 could not found toDo item no ' + req.params.id);
-    //
-    // }
 
 });
 
@@ -109,7 +90,7 @@ app.post('/todos', function (req, res) {
     }
 
     db.todo.create(body).then(function (todo) {
-    res.json(todo.toJSON())
+        res.json(todo.toJSON())
     }).catch(function (e) {
         res.status(400).send(e);
     });

@@ -1,21 +1,21 @@
-var Sequelize =require('sequelize');
-var sequelize =new Sequelize(undefined,undefined,undefined,{
-    'dialect':'sqlite',
-    'storage':__dirname +'/basic-sqlite-db.sqlite'
+var Sequelize = require('sequelize');
+var sequelize = new Sequelize(undefined, undefined, undefined, {
+    'dialect': 'sqlite',
+    'storage': __dirname + '/basic-sqlite-db.sqlite'
 });
 
-var Todo=sequelize.define('todo', {
-    description:{
-        type:Sequelize.STRING,
-        allowNull:false,
-        validate:{
-            len:[1,250]
+var Todo = sequelize.define('todo', {
+    description: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+            len: [1, 250]
         }
     },
-    completed:{
-        type:Sequelize.BOOLEAN,
-        allowNull:false,
-        defaultValue:false
+    completed: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
 
     },
 });
@@ -24,7 +24,7 @@ sequelize.sync().then(function () {  //{force:true}
     console.log('everything is synced!');
 
     Todo.findById(3).then(function (todo) {
-        if(todo){
+        if (todo) {
             console.log(todo.toJSON());
 
         } else {
@@ -32,7 +32,6 @@ sequelize.sync().then(function () {  //{force:true}
 
         }
     });
-
 
 
     // Todo.create({
@@ -71,8 +70,6 @@ sequelize.sync().then(function () {  //{force:true}
     //
     // })
     //
-
-
 
 
 });

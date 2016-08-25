@@ -142,6 +142,46 @@ app.put('/todos/:id', function (req, res) {
 
 
 
+app.get('/users', function (req, res) {
+    var query = req.query;
+    var where = {};
+
+    if (query.hasOwnProperty('q') && query.q.length > 0) {
+        where.email = {$like: '%' + query.q + '%'};
+    }
+
+    // console.log({where: where});
+
+
+    //noinspection JSUnresolvedFunction
+    db.user.findAll({where: where}).then(function (users) {
+
+        res.json(users);
+    }).catch(function (e) {
+        return res.status(500).json(e);
+    });
+
+
+});
+
+app.post('/users', function (req, res) {
+
+    var body = _.pick(req.body, 'email', 'password');
+
+    if (!_.isString(body.email) || !_.isString(body.password) || body.email.trim().length === 0 ||  body.password.trim().length <4) {
+        return res.status(400).json({error: 'validation'});
+    }
+
+    db.user.create(body).then(function (user) {
+        res.json(todo.toJSON())
+    }).catch(function (e) {
+        res.status(400).send(e);
+    });
+
+
+});
+
+
 
 
 db.sequelize.sync().then(function () {

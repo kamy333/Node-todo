@@ -172,10 +172,10 @@ app.post('/users', function (req, res) {
         return res.status(400).json({error: 'validation'});
     }
 
-   body.email=body.email.toLowerCase().trim();
+   // body.email=body.email.toLowerCase().trim();
 
     db.user.create(body).then(function (user) {
-        res.json(todo.toJSON())
+        res.json(user.toPublicJSON())
     }).catch(function (e) {
         res.status(400).send(e);
     });
@@ -184,9 +184,9 @@ app.post('/users', function (req, res) {
 });
 
 
+// to recreate force db.sequelize.sync({force:true})
 
-
-db.sequelize.sync().then(function () {
+db.sequelize.sync({force:true}).then(function () {
     app.listen(PORT, function () {
         console.log(` Express running on port ${PORT}!`);
     });

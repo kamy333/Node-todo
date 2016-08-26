@@ -172,6 +172,8 @@ app.post('/users', function (req, res) {
         return res.status(400).json({error: 'validation'});
     }
 
+   body.email=body.email.toLowerCase().trim();
+
     db.user.create(body).then(function (user) {
         res.json(todo.toJSON())
     }).catch(function (e) {

@@ -2,6 +2,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var db = require('./db');
+var bcrypt = require('bcryptjs');
+
 var app = express();
 var PORT = process.env.PORT || 3000;
 var todoNextId = 1;
@@ -151,7 +153,13 @@ app.get('/users', function (req, res) {
     //noinspection JSUnresolvedFunction
     db.user.findAll({where: where}).then(function (users) {
 
-        res.json(users);
+        users.forEach(function (user) {
+            res.json(user.toPublicJSON());
+
+        });
+        // res.json(users.toPublicJSON());
+
+        // res.json(users);
     }).catch(function (e) {
         return res.status(500).json(e);
     });
@@ -178,6 +186,43 @@ app.post('/users', function (req, res) {
 
 });
 
+app.post('/users/login', function (req, res) {
+
+    var body = _.pick(req.body, 'email', 'password');
+
+    if (!body.hasOwnProperty('email') && !body.hasOwnProperty('password')) {
+        return res.status(400).json({error: 'Missing information email missing'});
+
+    }
+
+    if (!_.isString(body.email) || !_.isString(body.password)) {
+        return res.status(400).json({error: 'validation'});
+    }
+
+    // if (!_.isString(body.email) || !_.isString(body.password) || body.email.trim().length === 0 || body.password.trim().length < 4) {
+    //     return res.status(400).json({error: 'validation'});
+    // }
+
+    // res.json(body);
+    // body.email=body.email.toLowerCase().trim();
+
+    db.user.findOne({
+        where: {
+            email: body.email
+        }
+    }).then(function (user) {
+        console.log('hi', user);
+        if (!user || !bcrypt.compareSync(body.password, user.get('password_hash'))) {
+            return res.status(401).send();
+
+        }
+        res.json(user.toPublicJSON());
+    }, function (e) {
+        res.status(500).send();
+    });
+
+
+});
 
 // to recreate force db.sequelize.sync({force:true})
 

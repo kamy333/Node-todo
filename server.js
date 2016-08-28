@@ -119,27 +119,22 @@ app.put('/todos/:id', function (req, res) {
     }
 
 
-
-    db.todo.findById(todoId).then(function(todo) {
+    db.todo.findById(todoId).then(function (todo) {
         if (todo) {
-            todo.update(attributes).then(function(todo) {
+            todo.update(attributes).then(function (todo) {
                 res.json(todo.toJSON());
-            }, function(e) {
+            }, function (e) {
                 res.status(400).json(e);
             });
         } else {
             res.status(404).send();
         }
-    }, function() {
+    }, function () {
         res.status(500).send();
     });
 
 
-
-
 });
-
-
 
 
 app.get('/users', function (req, res) {
@@ -168,11 +163,11 @@ app.post('/users', function (req, res) {
 
     var body = _.pick(req.body, 'email', 'password');
 
-    if (!_.isString(body.email) || !_.isString(body.password) || body.email.trim().length === 0 ||  body.password.trim().length <4) {
+    if (!_.isString(body.email) || !_.isString(body.password) || body.email.trim().length === 0 || body.password.trim().length < 4) {
         return res.status(400).json({error: 'validation'});
     }
 
-   // body.email=body.email.toLowerCase().trim();
+    // body.email=body.email.toLowerCase().trim();
 
     db.user.create(body).then(function (user) {
         res.json(user.toPublicJSON())
@@ -186,7 +181,7 @@ app.post('/users', function (req, res) {
 
 // to recreate force db.sequelize.sync({force:true})
 
-db.sequelize.sync({force:true}).then(function () {
+db.sequelize.sync().then(function () {
     app.listen(PORT, function () {
         console.log(` Express running on port ${PORT}!`);
     });

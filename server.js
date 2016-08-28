@@ -190,35 +190,12 @@ app.post('/users/login', function (req, res) {
 
     var body = _.pick(req.body, 'email', 'password');
 
-    if (!body.hasOwnProperty('email') && !body.hasOwnProperty('password')) {
-        return res.status(400).json({error: 'Missing information email missing'});
-
-    }
-
-    if (!_.isString(body.email) || !_.isString(body.password)) {
-        return res.status(400).json({error: 'validation'});
-    }
-
-    // if (!_.isString(body.email) || !_.isString(body.password) || body.email.trim().length === 0 || body.password.trim().length < 4) {
-    //     return res.status(400).json({error: 'validation'});
-    // }
-
-    // res.json(body);
-    // body.email=body.email.toLowerCase().trim();
-
-    db.user.findOne({
-        where: {
-            email: body.email
-        }
-    }).then(function (user) {
-        console.log('hi', user);
-        if (!user || !bcrypt.compareSync(body.password, user.get('password_hash'))) {
-            return res.status(401).send();
-
-        }
+    db.user.authenticate(body).then(function (user) {
         res.json(user.toPublicJSON());
-    }, function (e) {
-        res.status(500).send();
+
+    }, function () {
+        return res.status(401).send();
+
     });
 
 
@@ -226,7 +203,7 @@ app.post('/users/login', function (req, res) {
 
 // to recreate force db.sequelize.sync({force:true})
 
-db.sequelize.sync().then(function () {
+db.sequelize.sync({force: true}).then(function () {
     app.listen(PORT, function () {
         console.log(` Express running on port ${PORT}!`);
     });

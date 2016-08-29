@@ -154,10 +154,19 @@ app.get('/users', function (req, res) {
     //noinspection JSUnresolvedFunction
     db.user.findAll({where: where}).then(function (users) {
 
-        users.forEach(function (user) {
-            res.json(user.toPublicJSON());
+        if(users.length>0){
+            console.log(users);
 
-        });
+
+            users.forEach(function (user) {
+                res.json(user.toPublicJSON());
+
+            });
+        } else {
+            res.status(404).json({notFound: '404 could not found Users item no '});
+
+        }
+
         // res.json(users.toPublicJSON());
 
         // res.json(users);

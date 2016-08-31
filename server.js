@@ -18,7 +18,7 @@ app.get('/', function (req, res) {
 
 app.use(bodyParser.json());
 
-app.get('/todos',middleware.requireAuthentication, function (req, res) {
+app.get('/todos', middleware.requireAuthentication, function (req, res) {
     var query = req.query;
     var where = {};
 
@@ -48,7 +48,7 @@ app.get('/todos',middleware.requireAuthentication, function (req, res) {
 
 });
 
-app.get('/todos/:id',middleware.requireAuthentication, function (req, res) {
+app.get('/todos/:id', middleware.requireAuthentication, function (req, res) {
     var todoId = parseInt(req.params.id, 10);
 
     db.todo.findById(todoId).then(function (todo) {
@@ -68,7 +68,7 @@ app.get('/todos/:id',middleware.requireAuthentication, function (req, res) {
 
 });
 
-app.post('/todos',middleware.requireAuthentication, function (req, res) {
+app.post('/todos', middleware.requireAuthentication, function (req, res) {
 
     var body = _.pick(req.body, 'description', 'completed');
 
@@ -77,15 +77,19 @@ app.post('/todos',middleware.requireAuthentication, function (req, res) {
     }
 
     db.todo.create(body).then(function (todo) {
-        res.json(todo.toJSON())
-    }).catch(function (e) {
+        req.user.addTodo(todo).then(function () {
+            return todo.reload();
+        }).then(function (todo) {
+            res.json(todo.toJSON());
+        });
+    },function (e) {
         res.status(400).send(e);
     });
 
 
 });
 
-app.delete('/todos/:id',middleware.requireAuthentication, function (req, res) {
+app.delete('/todos/:id', middleware.requireAuthentication, function (req, res) {
     var todoId = parseInt(req.params.id, 10);
 
 
@@ -107,7 +111,7 @@ app.delete('/todos/:id',middleware.requireAuthentication, function (req, res) {
 
 });
 
-app.put('/todos/:id',middleware.requireAuthentication, function (req, res) {
+app.put('/todos/:id', middleware.requireAuthentication, function (req, res) {
     var todoId = parseInt(req.params.id, 10);
     var body = _.pick(req.body, 'description', 'completed');
     var attributes = {};
@@ -154,7 +158,7 @@ app.get('/users', function (req, res) {
     //noinspection JSUnresolvedFunction
     db.user.findAll({where: where}).then(function (users) {
 
-        if(users.length>0){
+        if (users.length > 0) {
             console.log(users);
 
 

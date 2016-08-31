@@ -20,18 +20,56 @@ var Todo = sequelize.define('todo', {
     },
 });
 
+var User=sequelize.define(('user'),{
+    email:Sequelize.STRING,
+
+});
+Todo.belongsTo(User);
+User.hasMany(Todo);
+
+
+
 sequelize.sync().then(function () {  //{force:true}
     console.log('everything is synced!');
 
-    Todo.findById(3).then(function (todo) {
-        if (todo) {
-            console.log(todo.toJSON());
+   // User.create({
+   //     email:'me@me.com'
+   // }).then(function () {
+   //   return  Todo.create({
+   //         description:'have fun'
+   //     })
+   // }).then(function (todo) {
+   //     User.findById(1).then(function (user) {
+   //          user.addTodo(todo);
+   //     });
+   // });
 
-        } else {
-            console.log('No todo found');
 
-        }
-    });
+  User.findById(1).then(function (user) {
+      user.getTodos({
+          where:{
+              completed:true,
+          }
+      }).then(function (todos) {
+          todos.forEach(function (todo) {
+              console.log(todo.toJSON());
+
+          })
+          
+      })
+  });
+
+
+
+    // Todo.findById(3).then(function (todo) {
+    //     if (todo) {
+    //         console.log(todo.toJSON());
+    //
+    //     } else {
+    //         console.log('No todo found');
+    //
+    //     }
+    // });
 
 
     // Todo.create({
